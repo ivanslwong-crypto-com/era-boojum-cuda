@@ -1,5 +1,7 @@
 use std::collections::HashSet;
+use std::env;
 use std::fmt::Display;
+use std::path::PathBuf;
 
 use boojum::algebraic_props::poseidon2_parameters::{
     Poseidon2GoldilocksExternalMatrix, Poseidon2GoldilocksInnerMatrix,
@@ -55,8 +57,13 @@ pub(super) fn generate() {
 }
 
 fn generate_cuda(descriptions: &[Description]) {
-    const TEMPLATE_PATH: &str = "native/gates_template.cu";
-    const RESULT_PATH: &str = "native/gates.cu";
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let binding = out_path.join("native/gates_template.cu");
+    let TEMPLATE_PATH = binding.to_str().expect("REASON");
+    let out_path2 = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let binding2 = out_path2.join("native/gates.cu");
+    let RESULT_PATH = binding2.to_str().expect("REASON");
+
     let mut code = String::new();
     let s = &mut code;
     new_line(s);
@@ -180,7 +187,9 @@ fn generate_cuda(descriptions: &[Description]) {
 
 fn generate_rust(descriptions: &[Description]) {
     const TEMPLATE_PATH: &str = "src/gates_data_template.rs";
-    const RESULT_PATH: &str = "src/gates_data.rs";
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let binding = out_path.join("gates_data.rs");
+    let RESULT_PATH = binding.to_str().expect("REASON");
     let mut hash_map = String::new();
     let mut bindings = String::new();
     let mut mappings = String::new();
